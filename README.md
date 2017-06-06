@@ -1,8 +1,10 @@
 # SureBokehEffect
 滤镜初探，三步集成美图软件背景虚化效果
+
 ######【前文提要】
 因工作一直没有接触过滤镜领域，所以在闲暇之余粗略的阅读了下文档，尝试实现某些效果，纯属娱乐，大神无视勿喷。
 ![左侧为原图，右侧为背景虚化后的效果图](http://upload-images.jianshu.io/upload_images/1767950-f82f3377879d68de.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 大致为突显女主上半身形象，并以上半身为中心渐变模糊扩散的效果。
 ######一、为图片添加高斯模糊滤镜
 既然需要执行滤镜操作，那肯定离不开[Core Image](https://developer.apple.com/reference/coreimage?language=objc)这一强大的框架了，感兴趣的童鞋可以点击进入查看文档。本篇文章中主要使用其几种常用的滤镜。对于模糊效果，系统提供了很多样式，但毕竟不是设计，无法通过肉眼区别它们之间的区别，因此这里简单的选取了高斯模糊效果。
@@ -21,9 +23,11 @@ CIImage *ciImage = [[CIImage alloc]initWithImage:image];
 ```
 执行如上操作生成的效果如下，也即是文章顶部效果图中的模糊效果：
 ![高斯模糊效果图](http://upload-images.jianshu.io/upload_images/1767950-7d1cda504f0818fc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 ######二、确定显示区域
 常用美图软件的童鞋们会发现背景虚化效果是存在两种显示调节形式的，一种为两个同心圆确定区域，一种为平行矩形确定区域。以美图秀秀为例。
 ![美图秀秀操作效果](http://upload-images.jianshu.io/upload_images/1767950-4526aaa2d64667d8.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 ######那如何通过代码实现如上效果呢？
 其实同心圆与平行矩形在代码中对应分别为[CIRadialGradient](https://developer.apple.com/library/content/documentation/GraphicsImaging/Reference/CoreImageFilterReference/#//apple_ref/doc/filter/ci/CIRadialGradient)和[CILinearGradient](https://developer.apple.com/library/content/documentation/GraphicsImaging/Reference/CoreImageFilterReference/#//apple_ref/doc/filter/ci/CILinearGradient)滤镜。我们可称其为径向渐变滤镜。
 
@@ -40,11 +44,13 @@ CIFilter *radialFilter = [CIFilter filterWithName:@"CIRadialGradient"];
 ```
 上述代码可生成如下图效果：
 ![径向渐变滤镜（同心圆）效果图](http://upload-images.jianshu.io/upload_images/1767950-e45b3c770d76dfbc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 根据效果图我们可以看出，内圆部分是完全透明的，内圆与外圆之间部分呈现渐变模糊效果。
 ######三、背景虚化效果合成
 通过上两步的操作我们生成了高斯模糊后的图片并且确定了所需显示的区域，接下来我们要通过**CIBlendWithMask**滤镜来进行效果合成。对于**CIBlendWithMask**滤镜，字面意思为遮盖物混合滤镜，文档解释过于草率，我们根据文档给予的效果图来分析：
 
 ![CIBlendWithMask滤镜](http://upload-images.jianshu.io/upload_images/1767950-3a014b0dd8341cc0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 如图所示，** CIBlendWithMask**滤镜可将左侧的三张图片合成为右侧的输出图片。具体的执行流程是，左一图做为左二图的填充，后续在与左三进行混合。**（这张图建议大家仔细观察下）**
 
 ######那如何通过这种混合方式实现自己的需求呢？
@@ -84,6 +90,7 @@ CGImageRelease(endImageRef);
 [https://github.com/LSure/SureBokehEffect](https://github.com/LSure/SureBokehEffect)
 
 最后放一张模拟器中的效果图
+
 ![最终效果图](http://upload-images.jianshu.io/upload_images/1767950-596529984356b8f9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 另附感言：P图软件公司的开发真不容易啊～
