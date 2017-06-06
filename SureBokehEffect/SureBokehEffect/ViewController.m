@@ -55,6 +55,8 @@
     CIContext *context = [CIContext contextWithOptions:nil];
     CGImageRef endImageRef = [context createCGImage:maskFilter.outputImage fromRect:ciImage.extent];
     imageView.image = [UIImage imageWithCGImage:endImageRef];
+    
+    CGImageRelease(endImageRef);
 
     // Do any additional setup after loading the view, typically from a nib.
 }
